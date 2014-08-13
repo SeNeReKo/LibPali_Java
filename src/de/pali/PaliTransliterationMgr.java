@@ -32,8 +32,8 @@ public class PaliTransliterationMgr extends TransliterationManager
 	 */
 	public PaliTransliterationMgr()
 	{
-		register(new PaliHarvardKyotoToLatin());
-		register(new PaliLatinToHarvardKyoto());
+		register(new PaliHarvardKyotoToRhysDavids());
+		register(new PaliRhysDavidsToHarvardKyoto());
 	}
 
 	////////////////////////////////////////////////////////////////

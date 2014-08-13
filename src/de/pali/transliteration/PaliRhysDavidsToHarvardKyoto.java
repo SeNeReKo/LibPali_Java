@@ -10,7 +10,7 @@ import de.general.transliteration.ITransliterator;
  *
  * @author knauth
  */
-public class PaliLatinToHarvardKyoto implements ITransliterator
+public class PaliRhysDavidsToHarvardKyoto implements ITransliterator
 {
 
 	////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ public class PaliLatinToHarvardKyoto implements ITransliterator
 	/**
 	 * Constructor.
 	 */
-	public PaliLatinToHarvardKyoto()
+	public PaliRhysDavidsToHarvardKyoto()
 	{
 	}
 
@@ -57,7 +57,7 @@ public class PaliLatinToHarvardKyoto implements ITransliterator
 	@Override
 	public String fromSchema()
 	{
-		return "RL";
+		return "RD";
 	}
 
 	@Override
