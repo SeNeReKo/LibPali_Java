@@ -37,7 +37,7 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 		map.put("ai","ै");
 		map.put("o","ो");
 		map.put("au","ौ");
-		map.put("","्");
+		map.put("halant","्");
 		map.put("M","ं");
 		map.put("H","ः");
 		map.put("","ँ");
@@ -140,9 +140,20 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 				sb.append(map.get("#"+vowel));
 			} else {
 				// map consonant
-				sb.append(map.get(consonant));
-				// if vowel is not a
-				if (!isInherentVowel(vowel)) {
+				String cons = map.get(consonant);
+				if (cons == null) {
+					// if we cannot map consonant, split consonant group
+					String first = consonant.substring(0,1);
+					String second = consonant.substring(1);
+					sb.append(map.get(first));
+					// add halant to remove inherent vowel from first consonant
+					sb.append(map.get("halant"));
+					sb.append(map.get(second));
+				} else {
+					sb.append(cons);
+				}
+				// if vowel is not empty and not "a"
+				if (!vowel.trim().isEmpty() && !isInherentVowel(vowel)) {
 					// add dependent vowel symbol
 					sb.append(map.get(vowel));
 				}
@@ -150,7 +161,7 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 		}
 		return sb.toString();
 	}	
-	
+
 	/**
 	 * Checks whether the given vowel corresponds to the
 	 * inherent devanagari vowel (which is often transliterated as "a")
@@ -160,7 +171,7 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 	private boolean isInherentVowel(String letter) {
 		return letter.equals("a");
 	}
-	
+
 	/**
 	 * Chunks a text into chunks consisting of
 	 * optionally one or more consonants followed by one vowel
@@ -170,6 +181,7 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 	private String[] chunk(String text) {
 		List<String> out = new ArrayList<String>();
 		String[] a = text.split("");
+		int j = 1;
 		for (int i = 1; i < a.length-1; i++) {
 			StringBuilder chunker = new StringBuilder();
 			while (isConsonant(a[i])) {
@@ -178,20 +190,20 @@ public class PaliHarvardKyotoToDevanagari implements ITransliterator {
 			}
 			chunker.append("%"+a[i]);
 			out.add(chunker.toString());
+			j = i;
+		}
+		if (++j < a.length) {
+			StringBuilder chunker = new StringBuilder();
+			while (j < a.length) {
+				chunker.append(a[j]);
+				j++;
+			}
+			out.add(chunker.append("% ").toString());
 		}
 		return out.toArray(new String[1]);
 	}
-	
-	
+
 	private boolean isConsonant(String letter) {
 		return letter.matches("[^iueoaIUEOA]+");
-	}
-	
-	private void test (String word) {
-		System.out.println(transliterate(word));
-	}
-	
-	public static void main(String[] args) {
-		new PaliHarvardKyotoToDevanagari().test("ahA");
 	}
 }
