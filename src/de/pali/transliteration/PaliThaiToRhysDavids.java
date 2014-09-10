@@ -5,7 +5,17 @@ import java.util.HashMap;
 import de.general.transliteration.ITransliterator;
 import de.unitrier.daalft.pali.general.Alphabet;
 import de.unitrier.daalft.pali.tools.Patterner;
-
+/**
+ * Transliterates Pali text written in Thai script to Rhys Davids transliteration
+ * <br/>
+ * <b>Important</b><br/><br/>
+ * Only works for the language Pali written in Thai script, not for the language 
+ * Thai written in the Thai script.<br/>
+ * The Thai script is much more extensive, including tone indicators which
+ * are not used when writing Pali.
+ * @author s2daalft
+ *
+ */
 public class PaliThaiToRhysDavids implements ITransliterator {
 	////////////////////////////////////////////////////////////////
 	// Constants
@@ -109,17 +119,17 @@ public class PaliThaiToRhysDavids implements ITransliterator {
 		// behind the next two letters if virama is present
 		text = text.replaceAll("([เโ])([^ฺ])", "$2$1").replaceAll("([เโ])(ฺ)(.)", "$2$3$1");
 		// get single characters
-		String[] sp = text.split("");
+		char[] chars = text.toCharArray();
 		// output 
 		StringBuilder sb = new StringBuilder();
-		// loop over chars, at index 0 is empty slot due to split
-		for (int i = 1; i < sp.length; i++) {
+		// loop over chars
+		for (int i = 0; i < chars.length; i++) {
 			// get trans char
-			String t = map.get(sp[i]);
+			String t = map.get(chars[i]);
 			// if not in map
 			if (t == null) {
 				// append original char
-				sb.append(sp[i]);
+				sb.append(chars[i]);
 				continue;
 			}
 			// if consonant
@@ -129,11 +139,11 @@ public class PaliThaiToRhysDavids implements ITransliterator {
 				// for niggahita, don't append inherent vowel
 				if (t.equals("ṃ")) continue;
 				// check that we have a "next" letter
-				if (i+1 < sp.length) {
+				if (i+1 < chars.length) {
 					// Inherent vowel appending block
 					
 					// get next letter transliterated
-					String next = map.get(sp[i+1]);
+					String next = map.get(chars[i+1]);
 					// if not in map
 					if (next == null) {
 						// append a
@@ -145,7 +155,7 @@ public class PaliThaiToRhysDavids implements ITransliterator {
 					if (isSpace) {
 						sb.append("a");
 					} else if (isVirama(next)) {
-						// skip virama
+						// skip virama character
 						i++;
 					} else if (isConsonant(next)) {
 						// append "a" before another consonant
@@ -158,9 +168,9 @@ public class PaliThaiToRhysDavids implements ITransliterator {
 				}
 			} else { // else current char is vowel
 				// if we have a "next" char
-				if (i+1 < sp.length) {
+				if (i+1 < chars.length) {
 					// get next char transliterated
-					String next = map.get(sp[i+1]);
+					String next = map.get(chars[i+1]);
 					// if next char is vowel
 					if (!isConsonant(next)) {
 						// if this char is "a"
